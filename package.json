@@ -1,7 +1,7 @@
 {
   "name": "graphql-schema-download",
   "version": "1.0.0",
-  "description": "Command line utility to download GraphQL schema from a URL",
+  "description": "A robust command-line utility for downloading and saving GraphQL schemas with support for custom headers, authentication, and TLS validation",
   "main": "download-schema.js",
   "bin": {
     "graphql-schema-download": "./download-schema.js"
@@ -13,8 +13,33 @@
     "graphql",
     "schema",
     "download",
-    "cli"
+    "cli",
+    "introspection",
+    "graphql-schema"
   ],
-  "author": "",
-  "license": "ISC"
+  "author": {
+    "name": "Andrew Brummer",
+    "url": "https://github.com/andylbrummer"
+  },
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/standardbeagle/graphql-schema-download.git"
+  },
+  "bugs": {
+    "url": "https://github.com/standardbeagle/graphql-schema-download/issues"
+  },
+  "homepage": "https://github.com/standardbeagle/graphql-schema-download#readme",
+  "dependencies": {
+    "commander": "^11.0.0",
+    "node-fetch": "^2.7.0",
+    "graphql": "^16.8.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  }
 }

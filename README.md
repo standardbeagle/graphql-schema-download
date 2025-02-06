@@ -4,19 +4,16 @@ A command line utility that downloads a GraphQL schema from a URL and writes it 
 
 ## Installation
 
-Clone this repository and install globally:
+Install globally from npm:
 
 ```bash
-git clone <repository-url>
-cd graphql-schema-download
-npm install
-npm link
+npm install -g graphql-schema-download
 ```
 
-Or install directly from the repository:
+Or use with npx:
 
 ```bash
-npm install -g git+<repository-url>
+npx graphql-schema-download https://api.example.com/graphql
 ```
 
 ## Usage

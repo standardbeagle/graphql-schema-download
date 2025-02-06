@@ -109,7 +109,7 @@ const path = require('path');
 
 // Set up command line interface
 program
-  .name('download-schema')
+  .name('graphql-schema-dl')
   .description('Downloads a GraphQL schema from a given URL')
   .argument('<url>', 'URL of the GraphQL endpoint')
   .option('-H, --header <headers...>', 'HTTP headers to include (format: "key=value")')

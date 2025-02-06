@@ -1,4 +1,4 @@
-# graphql-schema-download
+# @standardbeagle/graphql-schema-dl
 
 A command line utility that downloads a GraphQL schema from a URL and writes it to stdout or a file.
 
@@ -7,25 +7,25 @@ A command line utility that downloads a GraphQL schema from a URL and writes it 
 Install globally from npm:
 
 ```bash
-npm install -g graphql-schema-download
+npm install -g @standardbeagle/graphql-schema-dl
 ```
 
 Or use with npx:
 
 ```bash
-npx graphql-schema-download https://api.example.com/graphql
+npx @standardbeagle/graphql-schema-dl https://api.example.com/graphql
 ```
 
 ## Usage
 
 Basic usage (prints to stdout):
 ```bash
-graphql-schema-download https://api.example.com/graphql
+graphql-schema-dl https://api.example.com/graphql
 ```
 
 Save to file using output option:
 ```bash
-graphql-schema-download https://api.example.com/graphql -o schema.graphql
+graphql-schema-dl https://api.example.com/graphql -o schema.graphql
 ```
 
 ### Options
@@ -47,7 +47,7 @@ The utility provides three ways to set authorization headers, in order of securi
 echo '{"authorization": "Bearer your-token"}' > auth.json
 
 # Use auth file
-graphql-schema-download https://api.example.com/graphql -a auth.json
+graphql-schema-dl https://api.example.com/graphql -a auth.json
 ```
 
 2. Environment Variables:
@@ -57,18 +57,18 @@ export GRAPHQL_HEADER_AUTHORIZATION="Bearer your-token"
 export GRAPHQL_HEADER_X_API_KEY="your-api-key"
 
 # Use environment variables
-graphql-schema-download https://api.example.com/graphql
+graphql-schema-dl https://api.example.com/graphql
 ```
 
 3. Command Line (Least Secure, visible in shell history):
 ```bash
-graphql-schema-download https://api.example.com/graphql -H "Authorization=Bearer token"
+graphql-schema-dl https://api.example.com/graphql -H "Authorization=Bearer token"
 ```
 
 Custom environment variable prefix:
 ```bash
 export MY_PREFIX_AUTHORIZATION="Bearer your-token"
-graphql-schema-download https://api.example.com/graphql --auth-env-prefix MY_PREFIX_
+graphql-schema-dl https://api.example.com/graphql --auth-env-prefix MY_PREFIX_
 ```
 
 ### Auth File Format
@@ -99,18 +99,18 @@ The utility is configured for maximum compatibility with various GraphQL endpoin
 
 Basic schema download:
 ```bash
-graphql-schema-download https://api.example.com/graphql > schema.graphql
+graphql-schema-dl https://api.example.com/graphql > schema.graphql
 ```
 
 Using auth file and output file:
 ```bash
-graphql-schema-download https://api.example.com/graphql -a auth.json -o schema.graphql
+graphql-schema-dl https://api.example.com/graphql -a auth.json -o schema.graphql
 ```
 
 Using environment variables with custom prefix:
 ```bash
 export API_AUTH="Bearer token"
-graphql-schema-download https://api.example.com/graphql --auth-env-prefix API_ -o schema.graphql
+graphql-schema-dl https://api.example.com/graphql --auth-env-prefix API_ -o schema.graphql
 ```
 
 ### Using with Self-Signed Certificates

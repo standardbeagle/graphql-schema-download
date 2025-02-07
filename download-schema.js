@@ -275,6 +275,8 @@ async function downloadSchema(url, headers) {
       
       // Check if the error is TLS-related or specifically about self-signed certificates
       if (error.message.includes('self-signed certificate') ||
+          error.message.includes('self signed certificate') ||
+          error.code === 'DEPTH_ZERO_SELF_SIGNED_CERT' ||
           error.code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE' ||
           error.code === 'CERT_UNTRUSTED' ||
           error.code === 'SELF_SIGNED_CERT_IN_CHAIN' ||

@@ -117,6 +117,7 @@ program
   .option('-a, --auth-file <file>', 'JSON file containing authorization headers')
   .option('--auth-env-prefix <prefix>', 'Environment variable prefix for auth headers (default: "GRAPHQL_HEADER_")')
   .option('--force-tls-validation', 'Force TLS certificate validation')
+  .option('-f, --format <type>', 'Output format (graphql, json, markdown) (default: "graphql")')
   .version('1.0.0');
 
 program.parse();
@@ -323,42 +324,104 @@ async function downloadSchema(url, headers) {
       
       throw new Error(errorMsg);
     }
+// Convert schema to markdown format
+function schemaToMarkdown(schema) {
+  let markdown = '# GraphQL Schema Documentation\n\n';
 
-    // Build and print the schema
-    const schema = buildClientSchema(result.data);
-    const schemaString = printSchema(schema);
+  // Add types
+  markdown += '## Types\n\n';
+  const types = schema.getTypeMap();
+  Object.values(types).forEach(type => {
+    // Skip internal types
+    if (type.name.startsWith('__')) return;
 
-    if (outputFile) {
-      try {
-        fs.writeFileSync(outputFile, schemaString);
-        console.error(`Schema written to ${outputFile}`);
-      } catch (err) {
-        let errorMsg = `Failed to write schema to ${outputFile}\n`;
-        if (err.code === 'ENOENT') {
-          errorMsg += '\nDirectory does not exist\nPossible fixes:\n' +
-            `- Create directory: mkdir -p ${path.dirname(outputFile)}\n` +
-            '- Specify a different output location\n' +
-            '- Use current directory: ./' + path.basename(outputFile);
-        } else if (err.code === 'EACCES') {
-          errorMsg += '\nPermission denied\nPossible fixes:\n' +
-            `- Check file permissions: ls -l ${outputFile}\n` +
-            `- Change permissions: chmod 644 ${outputFile}\n` +
-            '- Try a different directory with write permissions';
-        } else if (err.code === 'EISDIR') {
-          errorMsg += '\nOutput path is a directory\nPossible fixes:\n' +
-            '- Specify a file path instead of directory\n' +
-            `- Use: ${path.join(outputFile, 'schema.graphql')}`;
-        } else {
-          errorMsg += '\nUnexpected error\nDiagnostic steps:\n' +
-            '- Check disk space: df -h\n' +
-            '- Verify write permissions in parent directory\n' +
-            '- Try using an absolute path';
-        }
-        throw new Error(errorMsg);
-      }
-    } else {
-      console.log(schemaString);
+    markdown += `### ${type.name}\n\n`;
+    if (type.description) {
+      markdown += `${type.description}\n\n`;
     }
+
+    // Fields
+    if (type.getFields) {
+      const fields = type.getFields();
+      if (Object.keys(fields).length > 0) {
+        markdown += '#### Fields\n\n';
+        markdown += '| Name | Type | Description |\n';
+        markdown += '|------|------|-------------|\n';
+        Object.values(fields).forEach(field => {
+          const desc = field.description || '';
+          markdown += `| ${field.name} | \`${field.type}\` | ${desc} |\n`;
+        });
+        markdown += '\n';
+      }
+    }
+
+    // Enum values
+    if (type.getValues) {
+      const values = type.getValues();
+      if (values && values.length > 0) {
+        markdown += '#### Enum Values\n\n';
+        markdown += '| Name | Description |\n';
+        markdown += '|------|-------------|\n';
+        values.forEach(value => {
+          const desc = value.description || '';
+          markdown += `| ${value.name} | ${desc} |\n`;
+        });
+        markdown += '\n';
+      }
+    }
+  });
+
+  return markdown;
+}
+
+// Build schema and format output
+const schema = buildClientSchema(result.data);
+const format = program.opts().format || 'graphql';
+let outputContent;
+
+switch (format.toLowerCase()) {
+  case 'json':
+    outputContent = JSON.stringify(result.data, null, 2);
+    break;
+  case 'markdown':
+    outputContent = schemaToMarkdown(schema);
+    break;
+  case 'graphql':
+  default:
+    outputContent = printSchema(schema);
+}
+
+if (outputFile) {
+  try {
+    fs.writeFileSync(outputFile, outputContent);
+    console.error(`Schema written to ${outputFile}`);
+  } catch (err) {
+    let errorMsg = `Failed to write schema to ${outputFile}\n`;
+    if (err.code === 'ENOENT') {
+      errorMsg += '\nDirectory does not exist\nPossible fixes:\n' +
+        `- Create directory: mkdir -p ${path.dirname(outputFile)}\n` +
+        '- Specify a different output location\n' +
+        '- Use current directory: ./' + path.basename(outputFile);
+    } else if (err.code === 'EACCES') {
+      errorMsg += '\nPermission denied\nPossible fixes:\n' +
+        `- Check file permissions: ls -l ${outputFile}\n` +
+        `- Change permissions: chmod 644 ${outputFile}\n` +
+        '- Try a different directory with write permissions';
+    } else if (err.code === 'EISDIR') {
+      errorMsg += '\nOutput path is a directory\nPossible fixes:\n' +
+        '- Specify a file path instead of directory\n' +
+        `- Use: ${path.join(outputFile, 'schema.graphql')}`;
+    } else {
+      errorMsg += '\nUnexpected error\nDiagnostic steps:\n' +
+        '- Check disk space: df -h\n' +
+        '- Verify write permissions in parent directory\n' +
+        '- Try using an absolute path';
+    }
+    throw new Error(errorMsg);
+  }
+} else {
+  console.log(outputContent);
+}
 
   } catch (error) {
     console.error('Error:', error.message);

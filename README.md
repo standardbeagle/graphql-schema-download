@@ -31,11 +31,62 @@ graphql-schema-dl https://api.example.com/graphql -o schema.graphql
 ### Options
 
 - `-o, --output <file>` - Write the schema to a file instead of stdout
+- `-f, --format <type>` - Output format (default: "graphql")
+  - `graphql` - Standard GraphQL SDL format
+  - `json` - Raw GraphQL introspection JSON
+  - `markdown` - Markdown documentation with tables
 - `-H, --header <headers...>` - HTTP headers to include (format: "key=value")
 - `-a, --auth-file <file>` - JSON file containing authorization headers
 - `--auth-env-prefix <prefix>` - Environment variable prefix for auth headers (default: "GRAPHQL_HEADER_")
 - `-V, --version` - Output the version number
 - `-h, --help` - Display help for command
+
+### Output Formats
+
+The tool supports three output formats:
+
+1. **GraphQL SDL** (default):
+```graphql
+type Query {
+  user(id: ID!): User
+}
+
+type User {
+  id: ID!
+  name: String!
+}
+```
+
+2. **JSON** (raw introspection result):
+```json
+{
+  "__schema": {
+    "types": [
+      {
+        "name": "Query",
+        "fields": [...]
+      }
+    ]
+  }
+}
+```
+
+3. **Markdown** (documentation format):
+```markdown
+# GraphQL Schema Documentation
+
+## Types
+
+### Query
+
+#### Fields
+| Name | Type | Description |
+|------|------|-------------|
+| user | `User!` | Get user by ID |
+
+### User
+...
+```
 
 ### Secure Authorization
 
